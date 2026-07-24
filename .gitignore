@@ -1,0 +1,11 @@
+# local tooling / internal notes — kept on disk, not published
+.claude/
+CONTENT.md
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.log
+.vscode/

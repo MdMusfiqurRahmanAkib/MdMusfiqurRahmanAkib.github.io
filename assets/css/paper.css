@@ -1,0 +1,337 @@
+/* ============================================================
+   paper.css — IEEE conference-manuscript typography
+   All document metrics are expressed in `em` relative to
+   --base, so a single variable zooms the whole page.
+   1 in = 72 pt ; base = 10 pt  ->  1 in = 7.2em
+   ============================================================ */
+
+:root{
+  --base: 11.5pt;          /* screen reading size; print resets to 10pt */
+
+  /* page geometry (US Letter, IEEE conference margins) */
+  --pg-w: 61.2em;          /* 8.5in  */
+  --pg-h: 79.2em;          /* 11in   */
+  --pg-pt: 5.4em;          /* 0.75in */
+  --pg-px: 4.5em;          /* 0.625in*/
+  --pg-pb: 7.2em;          /* 1in    */
+  --col-gap: 1.8em;        /* 0.25in */
+  --body-h: 66.6em;        /* 11in - 0.75in - 1in */
+
+  --serif: "Times New Roman", Times, "Liberation Serif", "Nimbus Roman", Georgia, serif;
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", monospace;
+}
+
+html[data-theme="light"]{
+  --desk:  #525659;
+  --page:  #ffffff;
+  --ink:   #000000;
+  --ink-2: #3a3a3a;
+  --ink-3: #6b6b6b;
+  --rule:  #000000;
+  --rule-2:#b9b9b9;
+  --acc:   #00629b;
+  --mark:  #ffe89a;
+  --shadow: 0 1px 3px rgba(0,0,0,.45), 0 14px 34px rgba(0,0,0,.30);
+}
+html[data-theme="dark"]{
+  --desk:  #0b0d10;
+  --page:  #16181c;
+  --ink:   #e2e6ea;
+  --ink-2: #b7bec6;
+  --ink-3: #8b939c;
+  --rule:  #8b939c;
+  --rule-2:#3a4048;
+  --acc:   #6db6e8;
+  --mark:  #5c4a12;
+  --shadow: 0 1px 2px rgba(0,0,0,.6), 0 16px 40px rgba(0,0,0,.55);
+}
+
+/* ---------- the sheet ---------- */
+.page{
+  position: relative;
+  font-size: var(--base);
+  font-family: var(--serif);
+  color: var(--ink);
+  background: var(--page);
+  width: var(--pg-w);
+  min-height: var(--pg-h);
+  padding: var(--pg-pt) var(--pg-px) var(--pg-pb);
+  margin: 0 auto 1.6em;
+  box-shadow: var(--shadow);
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+}
+
+.page-body{
+  column-count: 2;
+  column-gap: var(--col-gap);
+  column-fill: auto;
+  height: var(--body-h);
+  overflow: hidden;
+  text-align: justify;
+  hyphens: auto;
+  line-height: 1.16;
+}
+
+/* running head / foot */
+.run-head, .run-foot{
+  position: absolute;
+  left: var(--pg-px); right: var(--pg-px);
+  font-size: .8em;
+  color: var(--ink-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  letter-spacing: .02em;
+}
+.run-head{ top: 2.4em; font-variant: small-caps; }
+.run-foot{ bottom: 3.2em; }
+.run-foot .pg-no{ margin: 0 auto; font-size: 1.05em; }
+.page:first-child .run-head{ font-variant: normal; font-style: italic; }
+.page:first-child .run-head .rh-r{ font-style: normal; }
+
+/* ---------- title block ---------- */
+.titleblock{ column-span: all; text-align: center; margin-bottom: 1.4em; }
+
+.paper-title{
+  font-size: 2.4em;
+  font-weight: 400;
+  line-height: 1.08;
+  margin: 0 0 .7em;
+  letter-spacing: -.005em;
+  text-wrap: balance;
+}
+
+.authors{ display: flex; justify-content: center; gap: 3em; flex-wrap: wrap; }
+.author{ display: flex; flex-direction: column; font-size: 1.1em; line-height: 1.26; }
+.au-name{ font-size: 1.05em; margin-bottom: .15em; }
+.au-line{ font-style: italic; }
+.au-line a{ font-style: normal; font-family: var(--mono); font-size: .88em; }
+
+.linkbar{
+  list-style: none; margin: .9em 0 0; padding: 0;
+  display: flex; justify-content: center; flex-wrap: wrap;
+  gap: .2em 0; font-size: .82em; font-family: var(--mono);
+}
+.linkbar li + li::before{ content: "·"; margin: 0 .7em; color: var(--ink-3); }
+
+/* ---------- abstract ---------- */
+.abstract{ font-size: .9em; font-weight: 700; line-height: 1.2; margin-bottom: 1em; }
+.abstract p{ margin: 0 0 .6em; text-indent: 1.2em; }
+.abstract .lead{ font-style: italic; }
+.idxterms{ margin-bottom: 0 !important; }
+
+/* ---------- headings ---------- */
+/* Section numerals are injected by app.js (`.num`) rather than by CSS
+   counters: pagination moves headings into separate .page containers,
+   which would break CSS counter scoping across pages. */
+.sec{
+  font-size: 1em; font-weight: 400;
+  text-align: center; font-variant: small-caps;
+  letter-spacing: .03em;
+  margin: 1.1em 0 .5em; padding: 0;
+  break-after: avoid;
+}
+.sub{
+  font-size: 1em; font-weight: 400; font-style: italic;
+  margin: .8em 0 .3em; break-after: avoid;
+}
+
+/* ---------- body text ---------- */
+.page-body p{ margin: 0 0 .25em; text-indent: 1.2em; }
+.page-body p:first-of-type{ text-indent: 0; }
+.sec + p, .sub + p, .abstract + p{ text-indent: 0; }
+
+a{ color: var(--acc); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--acc) 35%, transparent); }
+a:hover{ border-bottom-color: var(--acc); }
+
+ul.tight, ol.tight{ margin: .2em 0 .5em; padding-left: 1.4em; }
+ul.tight li, ol.tight li{ margin-bottom: .18em; text-align: left; }
+
+dl.entries{ margin: .3em 0 .6em; }
+dl.entries dt{
+  display: flex; justify-content: space-between; gap: .8em; flex-wrap: wrap;
+  font-weight: 700; margin-top: .5em;
+}
+dl.entries dt .dates{ font-weight: 400; font-style: italic; white-space: nowrap; font-size: .92em; }
+dl.entries dd{ margin: 0; text-align: justify; }
+
+/* ---------- publications ---------- */
+/* No list markers: each entry already carries its [n] citation, and a
+   decimal marker beside it reads as two competing numbers. */
+ol.pubs{ margin: .3em 0 .5em; padding-left: 0; list-style: none; }
+.pub{ margin-bottom: .75em; break-inside: avoid; }
+.pub p{ text-indent: 0 !important; margin: 0 0 .12em; }
+.pub-t{ font-weight: 700; }
+.pub-t .pt-link{ color: inherit; border-bottom: none; }
+.pub-t .pt-link:hover{ color: var(--acc); border-bottom: 1px solid var(--acc); }
+.pub-au{ font-size: .95em; }
+.pub-v{ font-style: italic; }
+
+.badge{
+  display: inline-block; vertical-align: .12em;
+  font-family: var(--mono); font-size: .62em; font-weight: 400;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--acc); border: .7px solid currentColor; border-radius: 2px;
+  padding: 0 .35em; margin-left: .35em; white-space: nowrap;
+}
+.pub-a{ font-size: .95em; color: var(--ink-2); }
+.pub-links, .proj-links{ font-family: var(--mono); font-size: .78em; text-indent: 0 !important; }
+.pub-links a, .proj-links a{ margin-right: .9em; }
+.bib-btn{
+  font: inherit; font-family: var(--mono); color: var(--acc);
+  background: none; border: 1px solid var(--rule-2); border-radius: 3px;
+  padding: 0 .4em; cursor: pointer;
+}
+.bib-btn:hover{ border-color: var(--acc); }
+.bibtex{ display: none; }
+
+a.cite{ border: none; font-variant-numeric: tabular-nums; }
+
+/* ---------- figures ---------- */
+.fig{ margin: .8em 0; break-inside: avoid; }
+.fig-svg{ width: 100%; height: auto; display: block; }
+.fig-svg .tl-axis{ stroke: var(--rule-2); stroke-width: 1.2; }
+.fig-svg .tl-item circle{ fill: var(--page); stroke: var(--ink); stroke-width: 1.6; }
+.fig-svg text{ font-family: var(--serif); font-size: 11px; fill: var(--ink); }
+.fig-svg .tl-sub{ font-size: 9.5px; fill: var(--ink-2); font-style: italic; }
+
+/* Fig. 2 — research-thread diagram */
+.fig-svg .dg-box{ fill: none; stroke: var(--ink); stroke-width: 1; }
+.fig-svg .dg-fill{ fill: color-mix(in srgb, var(--acc) 12%, transparent); }
+.fig-svg .dg-arrow{ stroke: var(--ink); stroke-width: 1.1; }
+.fig-svg marker path{ fill: var(--ink); stroke: none; }
+.fig-svg .dg-t{ font-size: 10px; }
+.fig-svg .dg-s{ font-size: 8.2px; fill: var(--ink-2); }
+.fig-svg .dg-l{ font-size: 8px; fill: var(--ink-2); font-style: italic; }
+figcaption{
+  font-size: .8em; line-height: 1.2; margin-top: .45em; text-align: left;
+}
+.fig-lab{ font-weight: 400; }
+
+/* ---------- tables ---------- */
+.tbl{
+  width: 100%; border-collapse: collapse; margin: .8em 0;
+  font-size: .8em; break-inside: avoid; text-align: center;
+}
+.tbl caption{
+  caption-side: top; font-size: 1em; line-height: 1.25;
+  padding-bottom: .5em; text-align: center;
+}
+.tbl-num{ font-variant: small-caps; letter-spacing: .04em; }
+.tbl-cap{ font-variant: small-caps; letter-spacing: .02em; }
+.tbl thead th{
+  border-top: 1.1px solid var(--rule); border-bottom: .6px solid var(--rule);
+  font-weight: 400; padding: .25em .4em; font-variant: small-caps;
+}
+.tbl tbody td{ padding: .22em .4em; }
+.tbl tbody tr:last-child td{ border-bottom: 1.1px solid var(--rule); }
+.tbl .l{ text-align: left; }
+
+td.lvl{ letter-spacing: .12em; white-space: nowrap; font-size: 1.05em; }
+
+/* ---------- references ---------- */
+ol.refs{
+  font-size: .8em; line-height: 1.18;
+  margin: .3em 0 0; padding: 0; list-style: none;
+  counter-reset: ref;
+}
+ol.refs li{
+  counter-increment: ref;
+  padding-left: 1.9em; text-indent: -1.9em; margin-bottom: .3em;
+}
+ol.refs li::before{
+  content: "[" counter(ref) "]"; display: inline-block;
+  width: 1.9em; text-indent: 0; font-variant-numeric: tabular-nums;
+}
+ol.refs li:target{ background: var(--mark); }
+
+/* ---------- author biography ---------- */
+.bio{ margin-top: 1.2em; font-size: .85em; line-height: 1.2; break-inside: avoid; }
+.bio p{ text-indent: 0 !important; }
+.bio-photo{
+  float: left; width: 6.6em; height: 8.2em; margin: .2em .8em .3em 0;
+  border: .8px solid var(--rule-2); display: grid; place-items: center;
+  position: relative; overflow: hidden;
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+
+  /* Head-and-shoulders crop of a full-length source photo. The window shown
+     is roughly x 410–810, y 40–540 of the 1214x1280 original. If you swap in
+     an already-cropped portrait, set --ph-zoom:100% --ph-x:0 --ph-y:0 and
+     give the image object-fit:cover instead. */
+  --ph-zoom: 303%;
+  --ph-x: -102%;
+  --ph-y: -8%;
+}
+.bio-ph{ width: 62%; stroke: var(--ink-3); stroke-width: 4; fill: none; }
+/* The <img> removes itself via onerror when assets/img/photo.jpg is absent,
+   so the silhouette placeholder below shows through until the file is added. */
+.bio-photo img{
+  position: absolute; height: auto;
+  width: var(--ph-zoom); left: var(--ph-x); top: var(--ph-y);
+}
+.bio-photo:has(img) .bio-ph,
+.bio-photo:has(img) .bio-photo-note{ display: none; }
+.bio-photo-note{
+  position: absolute; bottom: .3em; font-family: var(--mono);
+  font-size: .6em; color: var(--ink-3);
+}
+
+.colophon{
+  margin-top: 1.2em; padding-top: .5em; border-top: .6px solid var(--rule-2);
+  font-size: .72em; font-style: italic; color: var(--ink-3);
+  text-indent: 0 !important; text-align: left;
+}
+
+/* ---------- placeholder highlighting ---------- */
+body.show-ph .ph{ background: var(--mark); box-shadow: 0 0 0 1px var(--mark); }
+body.show-ph .ph a{ background: none; }
+
+/* ============================================================
+   Springer LNCS — single-column variant (body.fmt-springer)
+   ============================================================ */
+body.fmt-springer .page{ --pg-px: 9em; }             /* wider margins, narrower measure */
+
+/* Springer LNCS reads in a classic book serif, distinct from IEEE's Times */
+body.fmt-springer .page{
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, "URW Palladio L", "TeX Gyre Pagella", Georgia, serif;
+}
+
+body.fmt-springer .page-body{
+  column-count: 1; column-gap: 0;
+  line-height: 1.28; text-align: justify;
+}
+
+/* title block: smaller, book-style */
+body.fmt-springer .paper-title{ font-size: 2em; font-weight: 700; letter-spacing: 0; }
+body.fmt-springer .authors{ font-size: 1em; }
+body.fmt-springer .au-name{ font-size: 1.1em; font-weight: 600; }
+
+/* abstract: indented, lighter than IEEE's bold block */
+body.fmt-springer .abstract{
+  font-weight: 400; font-size: .92em; line-height: 1.3;
+  margin: 0 2.2em 1.1em;
+}
+body.fmt-springer .abstract .lead{ font-weight: 700; font-style: normal; }
+body.fmt-springer .idxterms .lead{ font-style: italic; font-weight: 400; }
+
+/* headings: left-aligned, bold, Arabic (numerals injected by JS) */
+body.fmt-springer .sec{
+  text-align: left; font-variant: normal; letter-spacing: 0;
+  font-weight: 700; font-size: 1.2em; margin: 1.1em 0 .35em;
+}
+body.fmt-springer .sub{
+  font-style: normal; font-weight: 700; font-size: 1.02em; margin: .7em 0 .25em;
+}
+
+/* first line of each section is not indented, subsequent paragraphs are */
+body.fmt-springer .page-body p{ text-indent: 1.4em; }
+body.fmt-springer .sec + p,
+body.fmt-springer .sub + p,
+body.fmt-springer .abstract + p,
+body.fmt-springer .page-body > p:first-child{ text-indent: 0; }
+
+/* single wide column reads better with a touch more space around blocks */
+body.fmt-springer .fig, body.fmt-springer .tbl{ margin: 1em auto; }
+body.fmt-springer .tbl{ font-size: .82em; }
+body.fmt-springer dl.entries dt{ font-size: 1em; }
