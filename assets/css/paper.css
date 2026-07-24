@@ -160,7 +160,8 @@ dl.entries dd{ margin: 0; text-align: justify; }
 /* No list markers: each entry already carries its [n] citation, and a
    decimal marker beside it reads as two competing numbers. */
 ol.pubs{ margin: .3em 0 .5em; padding-left: 0; list-style: none; }
-.pub{ margin-bottom: .75em; break-inside: avoid; }
+.pub{ margin-bottom: .75em; break-inside: auto; display: block; list-style: none; }
+.pub-t, .pub-au, .pub-v, .pub-a, .pub-links{ break-inside: avoid; }  /* keep each line intact */
 .pub p{ text-indent: 0 !important; margin: 0 0 .12em; }
 .pub-t{ font-weight: 700; }
 .pub-t .pt-link{ color: inherit; border-bottom: none; }

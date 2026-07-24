@@ -196,6 +196,16 @@
     renderLevels();
     wrapTables();
     blocks = Array.prototype.slice.call(src.children);
+    // Flatten publication lists so each entry paginates on its own. A whole
+    // <ol> is one atomic block that jumps to the next page, leaving a large
+    // blank column behind it.
+    var flat = [];
+    blocks.forEach(function (b) {
+      if (b.classList && b.classList.contains('pubs')) {
+        Array.prototype.slice.call(b.children).forEach(function (li) { flat.push(li); });
+      } else { flat.push(b); }
+    });
+    blocks = flat;
     render(true);
   }
 
