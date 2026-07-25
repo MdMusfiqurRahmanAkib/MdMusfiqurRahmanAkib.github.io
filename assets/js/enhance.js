@@ -566,9 +566,7 @@
   }
 
   function startIntro(after) {
-    var seen = null; try { seen = sessionStorage.getItem(INTRO_KEY); } catch (e) {}
-    if (seen) { if (after) after(); return; }
-    try { sessionStorage.setItem(INTRO_KEY, '1'); } catch (e) {}
+    // Intro (under-construction gate + type-in) plays on every page load.
 
     var rest = $$('#doc .page:not(:first-child)');
     var body1 = $('#doc .page:first-child .page-body');
@@ -595,7 +593,7 @@
       setTimeout(function () { modal.remove(); }, 380);
       rest.forEach(function (p) { p.classList.remove('pg-hidden'); if (!reduce) p.classList.add('pg-reveal'); });
       if (reduce || !body1) { if (after) after(); return; }
-      typeIn(body1, 1300, after);
+      typeIn(body1, 4200, after);
     }
     $('.uc-enter', modal).addEventListener('click', enter);
     modal.addEventListener('click', function (e) { if (e.target === modal) enter(); });
