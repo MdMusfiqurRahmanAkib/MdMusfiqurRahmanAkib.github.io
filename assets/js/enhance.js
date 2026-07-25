@@ -136,7 +136,7 @@
     bookHolder.appendChild(mount);
 
     var clones = pages().map(function (p) {
-      var c = p.cloneNode(true); c.classList.add('book-page');
+      var c = p.cloneNode(true); c.classList.add('book-page'); c.classList.remove('ty-pending');
       c.style.animation = 'none'; c.style.opacity = '1'; c.style.transform = 'none';
       return c;
     });
@@ -565,6 +565,69 @@
     setTimeout(finalize, duration + 700);      // frozen-tab / stall safety net
   }
 
+  /** Type page 1 immediately, and each further page the first time it scrolls
+   *  into view — so the generation effect plays across the whole document. */
+  function typeAllPages(done) {
+    var pages = $$('#doc .page');
+    if (!pages.length) { if (done) done(); return; }
+    var typed = [];
+    function typePage(i, dur, cb) {
+      if (typed[i]) { if (cb) cb(); return; }
+      typed[i] = true;
+      pages[i].classList.remove('ty-pending');
+      var body = pages[i].querySelector('.page-body');
+      if (body) typeIn(body, dur, cb); else if (cb) cb();
+    }
+    for (var i = 1; i < pages.length; i++) pages[i].classList.add('ty-pending');
+    typePage(0, 4200, done);
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) return;
+          var idx = pages.indexOf(e.target);
+          if (idx > 0) { io.unobserve(e.target); typePage(idx, 2600); }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -12% 0px' });
+      for (var j = 1; j < pages.length; j++) io.observe(pages[j]);
+    }
+    var onScroll = function () {
+      var vh = innerHeight, remaining = false;
+      for (var k = 1; k < pages.length; k++) {
+        if (typed[k]) continue;
+        var r = pages[k].getBoundingClientRect();
+        if (r.top < vh * 0.85 && r.bottom > 0) typePage(k, 2600); else remaining = true;
+      }
+      if (!remaining) removeEventListener('scroll', onScroll);
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    // safety: never leave a page permanently hidden
+    setTimeout(function () {
+      for (var k = 1; k < pages.length; k++) if (!typed[k]) pages[k].classList.remove('ty-pending');
+    }, 25000);
+  }
+
+  /* ============ visitor counter (global, via Abacus) ============ */
+  function buildVisitorCount() {
+    var foot = $('.viewer-foot'); if (!foot) return;
+    var el = document.createElement('div');
+    el.className = 'visitor-count pending';
+    el.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span class="vc-text">Loading views…</span>';
+    foot.parentNode.insertBefore(el, foot.nextSibling);
+
+    var NS = 'mdmusfiqurrahmanakib-github-io', KEY = 'visits';
+    var counted = null; try { counted = sessionStorage.getItem('portfolio.counted'); } catch (e) {}
+    var url = 'https://abacus.jasoncameron.dev/' + (counted ? 'get' : 'hit') + '/' + NS + '/' + KEY;
+
+    fetch(url).then(function (r) { return r.json(); }).then(function (d) {
+      var n = d && (d.value != null ? d.value : d.count);
+      if (n == null) throw new Error('no value');
+      try { sessionStorage.setItem('portfolio.counted', '1'); } catch (e) {}
+      el.classList.remove('pending');
+      $('.vc-text', el).innerHTML = '<b>' + Number(n).toLocaleString() + '</b> visitors';
+    }).catch(function () { el.remove(); });   // fail quietly if the service is unreachable
+  }
+
   function startIntro(after) {
     // Intro (under-construction gate + type-in) plays on every page load.
 
@@ -591,9 +654,9 @@
       if (started) return; started = true;
       modal.classList.remove('show');
       setTimeout(function () { modal.remove(); }, 380);
-      rest.forEach(function (p) { p.classList.remove('pg-hidden'); if (!reduce) p.classList.add('pg-reveal'); });
-      if (reduce || !body1) { if (after) after(); return; }
-      typeIn(body1, 4200, after);
+      rest.forEach(function (p) { p.classList.remove('pg-hidden'); });
+      if (reduce) { if (after) after(); return; }
+      typeAllPages(after);
     }
     $('.uc-enter', modal).addEventListener('click', enter);
     modal.addEventListener('click', function (e) { if (e.target === modal) enter(); });
@@ -615,6 +678,7 @@
   buildToolbarButtons();
   applySavedFormat();
   updatePager();
+  buildVisitorCount();
   startIntro(buildCoach);        // under-construction gate, then type-in, then the coach mark
 
   document.addEventListener('paper:rendered', function () {

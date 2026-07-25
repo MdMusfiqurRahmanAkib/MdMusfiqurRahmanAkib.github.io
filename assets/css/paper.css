@@ -102,6 +102,11 @@ html[data-theme="dark"]{
   text-wrap: balance;
 }
 
+.paper-subtitle{
+  display: block; font-size: .46em; font-weight: 400; font-style: italic;
+  margin-top: .55em; color: var(--ink-2); letter-spacing: 0;
+}
+
 .authors{ display: flex; justify-content: center; gap: 3em; flex-wrap: wrap; }
 .author{ display: flex; flex-direction: column; font-size: 1.1em; line-height: 1.26; }
 .au-name{ font-size: 1.05em; margin-bottom: .15em; }
