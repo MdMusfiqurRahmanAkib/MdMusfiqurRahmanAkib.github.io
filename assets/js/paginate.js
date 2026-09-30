@@ -144,6 +144,10 @@
 
   /* ---------- render modes ---------- */
 
+  function isHeading(el) {
+    return !!(el && el.classList && (el.classList.contains('sec') || el.classList.contains('sub')));
+  }
+
   function renderPaged() {
     reclaim();
     doc.className = 'doc';
@@ -154,7 +158,14 @@
       body.appendChild(b);
       if (overflows(body) && body.children.length > 1) {
         body.removeChild(b);
+        // Keep headings with the block they introduce: carry any heading left
+        // stranded at the bottom of this page over to the next one.
+        var carry = [];
+        while (body.children.length > 1 && isHeading(body.lastElementChild)) {
+          carry.unshift(body.removeChild(body.lastElementChild));
+        }
         body = addPage(++n);
+        carry.forEach(function (h) { body.appendChild(h); });
         body.appendChild(b);
       }
     }
@@ -196,13 +207,20 @@
     renderLevels();
     wrapTables();
     blocks = Array.prototype.slice.call(src.children);
-    // Flatten publication lists so each entry paginates on its own. A whole
-    // <ol> is one atomic block that jumps to the next page, leaving a large
-    // blank column behind it.
+    // Flatten publication and reference lists so each entry paginates on its
+    // own. A whole <ol> is one atomic block that jumps to the next page,
+    // leaving a large blank column behind it. References lose their CSS
+    // counter once outside the <ol>, so their [n] labels are written in here.
     var flat = [];
     blocks.forEach(function (b) {
       if (b.classList && b.classList.contains('pubs')) {
         Array.prototype.slice.call(b.children).forEach(function (li) { flat.push(li); });
+      } else if (b.classList && b.classList.contains('refs')) {
+        Array.prototype.slice.call(b.children).forEach(function (li, k) {
+          li.classList.add('ref-item');
+          if (!li.querySelector('.rn')) li.insertAdjacentHTML('afterbegin', '<span class="rn">[' + (k + 1) + ']</span>');
+          flat.push(li);
+        });
       } else { flat.push(b); }
     });
     blocks = flat;

@@ -170,6 +170,17 @@ ol.pubs{ margin: .3em 0 .5em; padding-left: 0; list-style: none; }
 .pub p{ text-indent: 0 !important; margin: 0 0 .12em; }
 .pub-t{ font-weight: 700; }
 .pub-t .pt-link{ color: inherit; border-bottom: none; }
+
+/* status tag for accepted / presented papers (deliberately not .badge, which
+   the reader panel counts as a Scopus indexing mark) */
+.tag{
+  display: inline-block; vertical-align: .12em;
+  font-family: var(--mono); font-size: .62em; font-weight: 400;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-2); border: .7px dashed currentColor; border-radius: 2px;
+  padding: 0 .35em; margin-left: .35em; white-space: nowrap;
+}
+.tag.acc{ color: var(--acc); border-style: solid; }
 .pub-t .pt-link:hover{ color: var(--acc); border-bottom: 1px solid var(--acc); }
 .pub-au{ font-size: .95em; }
 .pub-v{ font-style: italic; }
@@ -237,20 +248,20 @@ figcaption{
 td.lvl{ letter-spacing: .12em; white-space: nowrap; font-size: 1.05em; }
 
 /* ---------- references ---------- */
-ol.refs{
+/* paginate.js lifts each reference out of the <ol> so the list can flow across
+   pages, and writes its [n] label into span.rn (CSS counters stop working once
+   the items are no longer in one list). */
+ol.refs{ margin: .3em 0 0; padding: 0; list-style: none; }
+.ref-item{
+  display: block; list-style: none;
   font-size: .8em; line-height: 1.18;
-  margin: .3em 0 0; padding: 0; list-style: none;
-  counter-reset: ref;
-}
-ol.refs li{
-  counter-increment: ref;
   padding-left: 1.9em; text-indent: -1.9em; margin-bottom: .3em;
 }
-ol.refs li::before{
-  content: "[" counter(ref) "]"; display: inline-block;
-  width: 1.9em; text-indent: 0; font-variant-numeric: tabular-nums;
+.ref-item .rn{
+  display: inline-block; width: 1.9em; text-indent: 0;
+  font-variant-numeric: tabular-nums;
 }
-ol.refs li:target{ background: var(--mark); }
+.ref-item:target{ background: var(--mark); }
 
 /* ---------- author biography ---------- */
 .bio{ margin-top: 1.2em; font-size: .85em; line-height: 1.2; break-inside: avoid; }

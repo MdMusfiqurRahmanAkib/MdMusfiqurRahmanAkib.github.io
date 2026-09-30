@@ -9,3 +9,6 @@ ehthumbs.db
 Desktop.ini
 *.log
 .vscode/
+
+# private certificate scans, never publish
+Certificates/

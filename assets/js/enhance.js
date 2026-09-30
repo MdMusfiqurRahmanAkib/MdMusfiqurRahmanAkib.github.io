@@ -209,7 +209,8 @@
       return au && au.firstChild && au.firstChild.nodeName === 'B';
     }).length;
     var scopus = $$('#doc .pub .badge').length;
-    return { pubs: pubs.length, first: first, scopus: scopus, conf: 4 };
+    // distinct venues: ICIPCN, ICCIT, IDAA, ICPSDT, BECITHCON, RAAICON, ICCVBIC, ICBDS
+    return { pubs: pubs.length, first: first, scopus: scopus, conf: 8 };
   }
 
   var reader, starEls = [], rated = 0;
