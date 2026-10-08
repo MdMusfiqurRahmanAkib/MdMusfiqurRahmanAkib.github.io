@@ -49,7 +49,6 @@ assets/css/paper.css     document typography (IEEE metrics, in em units)
 assets/css/app.css       reader chrome, responsive rules, print stylesheet
 assets/js/paginate.js    flows #source into fixed-size two-column sheets
 assets/js/app.js         theme, zoom, outline, scroll-spy, citations
-.claude/launch.json      local dev-server config
 ```
 
 ## How the layout works
