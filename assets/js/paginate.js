@@ -148,27 +148,80 @@
     return !!(el && el.classList && (el.classList.contains('sec') || el.classList.contains('sub')));
   }
 
+  /** Tables and figures behave like LaTeX floats: a float that does not fit
+   *  where it falls, or that would jump to the next column and leave a hole
+   *  behind it, waits while the following text fills the space, and is placed
+   *  as soon as it fits cleanly (at the latest, at the top of the next page). */
+  function isFloat(el) {
+    return !!(el && el.classList && (el.classList.contains('tbl-wrap') || el.classList.contains('fig')));
+  }
+
   function renderPaged() {
     reclaim();
     doc.className = 'doc';
-    var n = 1, body = addPage(n);
+    var n = 1, body = addPage(n), pending = [];
+
+    function full() { return overflows(body) && body.children.length > 1; }
+
+    function colOf(r, br) { return r.left < br.left + br.width / 2 - 5 ? 0 : 1; }
+
+    // True when `f` starts in the second column while the first column still
+    // has a noticeable empty stretch at its foot (a heading kept with `f` may
+    // have moved across too, so the whole first column is measured).
+    function leavesHole(f) {
+      var br = body.getBoundingClientRect(), fr = f.getClientRects();
+      if (!fr.length || colOf(fr[0], br) === 0) return false;
+      var bottom = br.top;
+      Array.prototype.forEach.call(body.children, function (k) {
+        Array.prototype.forEach.call(k.getClientRects(), function (r) {
+          if (r.height > 0 && colOf(r, br) === 0) bottom = Math.max(bottom, r.bottom);
+        });
+      });
+      return (br.bottom - bottom) > 0.08 * br.height;
+    }
+
+    // Place waiting floats here if they fit cleanly; `force` (top of a fresh
+    // page) places them regardless, opening new pages as needed.
+    function placeFloats(force) {
+      while (pending.length) {
+        var f = pending[0];
+        body.appendChild(f);
+        if (full()) {
+          body.removeChild(f);
+          if (!force) return;
+          body = addPage(++n);
+          continue;
+        }
+        if (!force && leavesHole(f)) { body.removeChild(f); return; }
+        pending.shift();
+      }
+    }
 
     for (var i = 0; i < blocks.length; i++) {
       var b = blocks[i];
+      if (isFloat(b)) { pending.push(b); placeFloats(false); continue; }
       body.appendChild(b);
-      if (overflows(body) && body.children.length > 1) {
-        body.removeChild(b);
-        // Keep headings with the block they introduce: carry any heading left
-        // stranded at the bottom of this page over to the next one.
-        var carry = [];
-        while (body.children.length > 1 && isHeading(body.lastElementChild)) {
-          carry.unshift(body.removeChild(body.lastElementChild));
-        }
+      if (!full()) { placeFloats(false); continue; }
+      body.removeChild(b);
+      // Keep headings with the block they introduce: carry any heading left
+      // stranded at the bottom of this page over to the next one.
+      var carry = [];
+      while (body.children.length > 1 && isHeading(body.lastElementChild)) {
+        carry.unshift(body.removeChild(body.lastElementChild));
+      }
+      body = addPage(++n);
+      placeFloats(true);
+      carry.forEach(function (h) { body.appendChild(h); });
+      body.appendChild(b);
+      if (full()) {
+        // the floats filled this page; move the text to a fresh one
+        carry.concat([b]).forEach(function (x) { body.removeChild(x); });
         body = addPage(++n);
         carry.forEach(function (h) { body.appendChild(h); });
         body.appendChild(b);
       }
     }
+    placeFloats(true);
     finish(n);
   }
 
@@ -200,6 +253,16 @@
     render(true);
   }
 
+  /** Replace a list block with its per-item pieces, keeping the outer margins
+   *  on the first and last piece only. */
+  function splitParts(orig, parts, flat) {
+    if (!parts.length) { flat.push(orig); return; }
+    parts[0].classList.add('first');
+    parts[parts.length - 1].classList.add('last');
+    parts.forEach(function (p) { flat.push(p); });
+    orig.remove();
+  }
+
   function init() {
     doc = document.getElementById('doc');
     src = document.getElementById('source');
@@ -221,6 +284,26 @@
           if (!li.querySelector('.rn')) li.insertAdjacentHTML('afterbegin', '<span class="rn">[' + (k + 1) + ']</span>');
           flat.push(li);
         });
+      } else if (b.matches && b.matches('dl.entries')) {
+        // one <dl> per entry, so a long list can break between entries
+        var parts = [];
+        Array.prototype.slice.call(b.children).forEach(function (el) {
+          if (el.tagName === 'DT' || !parts.length) {
+            var d = document.createElement('dl');
+            d.className = 'entries part';
+            parts.push(d);
+          }
+          parts[parts.length - 1].appendChild(el);
+        });
+        splitParts(b, parts, flat);
+      } else if (b.matches && b.matches('ul.tight')) {
+        var items = Array.prototype.slice.call(b.children).map(function (li) {
+          var u = document.createElement('ul');
+          u.className = 'tight part';
+          u.appendChild(li);
+          return u;
+        });
+        splitParts(b, items, flat);
       } else { flat.push(b); }
     });
     blocks = flat;

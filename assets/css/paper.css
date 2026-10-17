@@ -160,6 +160,13 @@ dl.entries dt{
 }
 dl.entries dt .dates{ font-weight: 400; font-style: italic; white-space: nowrap; font-size: .92em; }
 dl.entries dd{ margin: 0; text-align: justify; }
+/* lists split into one block per item by paginate.js */
+dl.entries.part, ul.tight.part{ margin-top: 0; margin-bottom: 0; }
+dl.entries.part.first{ margin-top: .3em; }
+dl.entries.part.last{ margin-bottom: .6em; }
+ul.tight.part.first{ margin-top: .2em; }
+ul.tight.part.last{ margin-bottom: .5em; }
+ul.tight.part li{ margin-bottom: .18em; }
 
 /* ---------- publications ---------- */
 /* No list markers: each entry already carries its [n] citation, and a
