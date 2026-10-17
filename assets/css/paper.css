@@ -367,4 +367,6 @@ body.fmt-springer .page-body > p:first-child{ text-indent: 0; }
 /* single wide column reads better with a touch more space around blocks */
 body.fmt-springer .fig, body.fmt-springer .tbl{ margin: 1em auto; }
 body.fmt-springer .tbl{ font-size: .82em; }
+body.fmt-springer .tbl.wide{ font-size: .7em; }
+body.fmt-springer .tbl.wide td{ padding: .15em .3em; }
 body.fmt-springer dl.entries dt{ font-size: 1em; }
