@@ -211,8 +211,8 @@
     }).length;
     var scopus = $$('#doc .pub .badge').length;
     // distinct venues: ICIPCN, ICCIT, IDAA, ICPSDT, ICCVBIC, iCONEECT, BECITHCON,
-    // RAAICON, ICBDS, i-COSTE, CSDE
-    return { pubs: pubs.length, first: first, scopus: scopus, conf: 11 };
+    // RAAICON, ICBDS, i-COSTE, CSDE, ICISET
+    return { pubs: pubs.length, first: first, scopus: scopus, conf: 12 };
   }
 
   var reader, starEls = [], rated = 0;
