@@ -254,6 +254,12 @@ figcaption{
 .tbl tbody td{ padding: .22em .4em; }
 .tbl tbody tr:last-child td{ border-bottom: 1.1px solid var(--rule); }
 .tbl .l{ text-align: left; }
+/* full-width table spanning both columns (IEEE table*) */
+.tbl-wrap.wide{ column-span: all; margin-bottom: .6em; }
+.tbl-wrap.wide .tbl{ margin-top: 0; }
+.tbl.wide{ font-size: .74em; }
+.tbl.wide td{ padding: .18em .35em; }
+.tbl.wide td:nth-child(n+3), .tbl.wide th:nth-child(n+3){ white-space: nowrap; }
 
 td.lvl{ letter-spacing: .12em; white-space: nowrap; font-size: 1.05em; }
 

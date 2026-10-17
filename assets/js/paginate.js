@@ -74,7 +74,7 @@
   function wrapTables() {
     src.querySelectorAll(':scope > .tbl').forEach(function (t) {
       var w = document.createElement('div');
-      w.className = 'tbl-wrap';
+      w.className = t.classList.contains('wide') ? 'tbl-wrap wide' : 'tbl-wrap';
       t.parentNode.insertBefore(w, t);
       w.appendChild(t);
     });
@@ -185,6 +185,8 @@
     function placeFloats(force) {
       while (pending.length) {
         var f = pending[0];
+        // full-width floats span both columns, so they only go at the top of a page
+        if (!force && f.classList.contains('wide') && body.children.length) return;
         body.appendChild(f);
         if (full()) {
           body.removeChild(f);
