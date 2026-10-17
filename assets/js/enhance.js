@@ -203,14 +203,16 @@
   }
 
   function stats() {
-    var pubs = $$('#doc .pub');
+    // manuscripts under review (.ur) are not counted as peer-reviewed papers
+    var pubs = $$('#doc .pub:not(.ur)');
     var first = pubs.filter(function (p) {
       var au = $('.pub-au', p);
       return au && au.firstChild && au.firstChild.nodeName === 'B';
     }).length;
     var scopus = $$('#doc .pub .badge').length;
-    // distinct venues: ICIPCN, ICCIT, IDAA, ICPSDT, BECITHCON, RAAICON, ICCVBIC, ICBDS
-    return { pubs: pubs.length, first: first, scopus: scopus, conf: 8 };
+    // distinct venues: ICIPCN, ICCIT, IDAA, ICPSDT, ICCVBIC, iCONEECT, BECITHCON,
+    // RAAICON, ICBDS, i-COSTE, CSDE
+    return { pubs: pubs.length, first: first, scopus: scopus, conf: 11 };
   }
 
   var reader, starEls = [], rated = 0;

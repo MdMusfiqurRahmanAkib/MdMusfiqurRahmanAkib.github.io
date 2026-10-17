@@ -181,6 +181,9 @@ ol.pubs{ margin: .3em 0 .5em; padding-left: 0; list-style: none; }
   padding: 0 .35em; margin-left: .35em; white-space: nowrap;
 }
 .tag.acc{ color: var(--acc); border-style: solid; }
+/* highlight for Q1 journals and awards */
+.tag.hi{ color: var(--page); background: var(--acc); border: .7px solid var(--acc); font-weight: 700; }
+.tbl tr.hl td{ font-weight: 700; }
 .pub-t .pt-link:hover{ color: var(--acc); border-bottom: 1px solid var(--acc); }
 .pub-au{ font-size: .95em; }
 .pub-v{ font-style: italic; }
